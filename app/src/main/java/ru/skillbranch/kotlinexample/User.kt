@@ -145,4 +145,10 @@ class User private constructor(
                 }
         }
     }
+
+    fun newAuthoriationCode() {
+        val code = generateAccessCode()
+        passwordHash = encrypt(code)
+        accessCode = code
+    }
 }

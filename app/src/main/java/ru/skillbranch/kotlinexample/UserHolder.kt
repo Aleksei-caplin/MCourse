@@ -34,4 +34,9 @@ object UserHolder {
                 }
             }
     }
+
+    fun requestAccessCode(login: String) {
+        val user = map[login.trim()] ?: map[login.replace("[^+\\d]".toRegex(), "")]
+        user?.newAuthoriationCode()
+    }
 }
