@@ -24,6 +24,8 @@
 /app/build.gradle
 /app/src/androidTest
 /app/src/main/res
+/app/src/main/test/
 /app/src/main/AndroidManifest.xml
 
 .idea/
+git/
