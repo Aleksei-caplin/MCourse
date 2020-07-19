@@ -33,9 +33,8 @@ class User private constructor(
             _login = value.toLowerCase()
         }
         get() = _login!!
-    private val salt: String by lazy {
-        ByteArray(16).also { SecureRandom().nextBytes(it) }.toString()
-    }
+    private var salt: String = ByteArray(16).also { SecureRandom().nextBytes(it) }.toString()
+
     private lateinit var passwordHash: String
 
     @VisibleForTesting(otherwise = VisibleForTesting.NONE)
@@ -64,6 +63,21 @@ class User private constructor(
         accessCode = code
         sendAccessCodeToUser(rawPhone, code)
     }
+
+    // for csv
+    constructor(
+        firstName: String,
+        lastName: String?,
+        email: String?,
+        _salt: String,
+        hash: String,
+        phone: String?
+    ) : this(firstName, lastName, email = email, rawPhone = phone, meta = mapOf("src" to "csv")) {
+        println("Secondary csv constructor")
+        salt = _salt
+        passwordHash = hash
+    }
+
 
     init {
         println("First init block, primary constructor was called")
@@ -133,6 +147,19 @@ class User private constructor(
             }
         }
 
+        fun parseCSV(csv: String): User {
+            val user = csv.split(";", ":")
+            val (firstName, lastName) = user[0].trim().fullNameToPair()
+            return User(
+                firstName,
+                lastName,
+                user[1].ifBlank{ null },
+                user[2],
+                user[3],
+                user[4].ifBlank{ null }
+            )
+        }
+
         private fun String.fullNameToPair(): Pair<String, String?> {
             return this.split(" ")
                 .filter { it.isNotBlank() }
@@ -151,4 +178,6 @@ class User private constructor(
         passwordHash = encrypt(code)
         accessCode = code
     }
+
+
 }

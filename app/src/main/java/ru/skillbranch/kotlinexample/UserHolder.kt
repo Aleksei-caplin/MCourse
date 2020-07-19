@@ -44,4 +44,12 @@ object UserHolder {
         val user = map[login.trim()] ?: map[login.replace("[^+\\d]".toRegex(), "")]
         user?.newAuthorizationCode()
     }
+
+    fun importUsers(list: List<String>): List<User> {
+        return list.map {
+            User.parseCSV(it).also {user ->
+                map[user.login] = user
+            }
+        }
+    }
 }
