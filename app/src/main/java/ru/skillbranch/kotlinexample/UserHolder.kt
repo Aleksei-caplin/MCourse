@@ -3,6 +3,10 @@ package ru.skillbranch.kotlinexample
 object UserHolder {
     private val map = mutableMapOf<String, User>()
 
+    fun resetMap() {
+        map.clear()
+    }
+
     fun registerUser (
         fullName: String,
         email:String,
@@ -12,8 +16,9 @@ object UserHolder {
             .also { user -> map[user.login] = user}
     }
 
-    fun loginUser(login: String, password: String): String? {
-        return map[login.trim()]?.run{
+    fun loginUser(login: String, password: String) : String? {
+        val user = map[login.trim()] ?: map[login.replace("[^+\\d]".toRegex(), "")]
+        return user?.run {
             if(checkPassword(password)) this.userInfo
             else null
         }
@@ -37,6 +42,6 @@ object UserHolder {
 
     fun requestAccessCode(login: String) {
         val user = map[login.trim()] ?: map[login.replace("[^+\\d]".toRegex(), "")]
-        user?.newAuthoriationCode()
+        user?.newAuthorizationCode()
     }
 }
